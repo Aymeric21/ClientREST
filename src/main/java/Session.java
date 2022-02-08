@@ -3,6 +3,8 @@ import com.sun.jersey.api.client.WebResource;
 import javarow.*;
 import javarow.entity.WorkoutState;
 
+import java.time.Duration;
+
 public class Session {
     private Rower rower;
 
@@ -16,10 +18,21 @@ public class Session {
         return this.rower;
     }
 
-    public void lancerSession(WebResource wr, int distancePar){
+    public void lancerSession(/*WebResource wr,*/String distancePar,String type){
         rower.goToMenuScreen();
         rower.getMonitor();
-        rower.setWorkoutDistance(distancePar);
+        System.out.println("session lancé");
+        if(type.equals("distance"))
+        {
+            int dist = Integer.parseInt(distancePar);
+            rower.setWorkoutDistance(dist);
+        }
+        else if(type.equals("temps")){
+            double t = Double.parseDouble(distancePar);
+            Duration time = Duration.ofSeconds((long) t);
+            rower.setWorkoutTime(time);
+        }
+
         Command command = new Command();
         command.addCommand(ShortSpecificPMCommand.CSAFE_PM_GET_WORKOUTSTATE);
         UsbResponse resp = rower.sendCommand(command);
@@ -41,7 +54,11 @@ public class Session {
         ClientResponse resp2;
         while(rower.getWorkout().getWorkoutState() != WorkoutState.WORKOUT_END)
         {
-            while(rower.getStroke().getCount() <= nb || rower.getStroke().getCount() == 0) {}
+            while(rower.getStroke().getCount() <= nb || rower.getStroke().getCount() == 0) {
+                if(rower.getWorkout().getWorkoutState() == WorkoutState.WORKOUT_END){
+                    break;
+                }
+            }
             power = rower.getMonitor().getPower();
             temps = rower.getMonitor().getTimeCentisecond();
             distance = rower.getMonitor().getDistanceDecimeter();
@@ -52,7 +69,7 @@ public class Session {
             frequence_bpm = rower.getMonitor().getHeartrateBpm();
 
             spower = ""+power;
-            resp2 = wr.accept("text/plain").put(ClientResponse.class,spower);
+            //resp2 = wr.accept("text/plain").put(ClientResponse.class,spower);
 
             nb = rower.getStroke().getCount();
         }
