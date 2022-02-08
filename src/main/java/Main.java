@@ -4,6 +4,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import javarow.*;
 import javarow.entity.WorkoutState;
+import org.codehaus.jettison.json.JSONException;
 
 public class Main{
     public static void main(String[] args) {
@@ -13,7 +14,7 @@ public class Main{
         String url = "http://10.169.195.150:8080/ServeurEJBRameurTutore-1.0-SNAPSHOT/rest/ressource/";
         String urlValeur = url+"valeur";
         String urlType = url+"type";
-        String urlPerformance = url+"donnees";
+        String urlPerformance = url+"donnees/performance";
         String urlid = url+"ajoutRameur";
         String urliden = url+"identifiant";
 
@@ -69,7 +70,11 @@ public class Main{
             {
                 i = Integer.parseInt(s);
                 if(i > 0 && (t.equals("distance") || t.equals("temps"))){
-                    session.lancerSession(webResourcePerf,s,t);
+                    try {
+                        session.lancerSession(webResourcePerf,s,t);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
                 i = 0;
             }

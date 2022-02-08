@@ -4,6 +4,8 @@ import javafx.util.Builder;
 import javarow.*;
 import javarow.entity.Status;
 import javarow.entity.WorkoutState;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 import javax.ws.rs.core.MediaType;
 import java.time.Duration;
@@ -23,7 +25,7 @@ public class Session {
         return this.rower;
     }
 
-    public void lancerSession(WebResource wr,String distancePar,String type){
+    public void lancerSession(WebResource wr,String distancePar,String type) throws JSONException {
         rower.goToMenuScreen();
         rower.getMonitor();
         System.out.println("session lancé");
@@ -84,6 +86,9 @@ public class Session {
             frequence_bpm = rower.getMonitor().getHeartrateBpm();
             donnees = new Donnees(power,temps,distance,coups_pm,rythme,calories_h,calories,frequence_bpm);
             //response = builder.put(ClientResponse.class,donnees.envoie());
+            JSONObject input = new JSONObject();
+            input.put("puissance",power);
+            response = wr.accept(MediaType.APPLICATION_JSON).entity(input).put(ClientResponse.class,JSONObject.class);
             System.out.println(donnees.envoie());
             nb = rower.getStroke().getCount();
         }
