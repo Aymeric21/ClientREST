@@ -26,4 +26,18 @@ public class Donnees {
     public Donnees envoie(){
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "{\n" +
+                "\"power\":" + power + ",\n" +
+                "\"temps\":" + temps + ",\n" +
+                "\"distance\":" + distance + ",\n" +
+                "\"coups_pm\":" + coups_pm + ",\n" +
+                "\"rythme\":" + rythme + ",\n" +
+                "\"calories_h\":" + calories_h + ",\n" +
+                "\"calories\":" + calories + ",\n" +
+                "\"frequence_bpm\":" + frequence_bpm + "\n" +
+                "}\n";
+    }
 }
