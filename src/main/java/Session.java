@@ -5,6 +5,8 @@ import javarow.entity.WorkoutState;
 
 import java.time.Duration;
 
+import static javarow.entity.Status.FINISHED;
+
 public class Session {
     private Rower rower;
 
@@ -54,6 +56,7 @@ public class Session {
         ClientResponse resp2;
         while(rower.getWorkout().getWorkoutState() != WorkoutState.WORKOUT_END)
         {
+            System.out.println(rower.getStatus().compareTo(FINISHED));
             while(rower.getStroke().getCount() <= nb || rower.getStroke().getCount() == 0) {
                 if(rower.getWorkout().getWorkoutState() == WorkoutState.WORKOUT_END){
                     break;
