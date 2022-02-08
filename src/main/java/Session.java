@@ -1,9 +1,11 @@
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import javafx.util.Builder;
 import javarow.*;
 import javarow.entity.Status;
 import javarow.entity.WorkoutState;
 
+import javax.ws.rs.core.MediaType;
 import java.time.Duration;
 
 import static javarow.entity.Status.FINISHED;
@@ -21,10 +23,11 @@ public class Session {
         return this.rower;
     }
 
-    public void lancerSession(/*WebResource wr,*/String distancePar,String type){
+    public void lancerSession(WebResource wr,String distancePar,String type){
         rower.goToMenuScreen();
         rower.getMonitor();
         System.out.println("session lancé");
+        WebResource.Builder builder = wr.accept(MediaType.APPLICATION_JSON).header("content-type",MediaType.APPLICATION_JSON);
         if(type.equals("distance"))
         {
             int dist = Integer.parseInt(distancePar);
@@ -51,6 +54,8 @@ public class Session {
         int calories;
         int frequence_bpm;
         String spower;
+        ClientResponse response;
+        Donnees donnees;
 
         int nb = 0;
 
@@ -77,10 +82,9 @@ public class Session {
             calories_h = rower.getMonitor().getCaloriesPerHour();
             calories = rower.getMonitor().getCalories();
             frequence_bpm = rower.getMonitor().getHeartrateBpm();
-
-            spower = ""+power;
-            //resp2 = wr.accept("text/plain").put(ClientResponse.class,spower);
-
+            donnees = new Donnees(power,temps,distance,coups_pm,rythme,calories_h,calories,frequence_bpm);
+            //response = builder.put(ClientResponse.class,donnees.envoie());
+            System.out.println(donnees.envoie());
             nb = rower.getStroke().getCount();
         }
 

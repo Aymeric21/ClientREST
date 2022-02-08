@@ -69,7 +69,7 @@ public class Main{
             {
                 i = Integer.parseInt(s);
                 if(i > 0 && (t.equals("distance") || t.equals("temps"))){
-                    session.lancerSession(/*webResourcePerf,*/s,t);
+                    session.lancerSession(webResourcePerf,s,t);
                 }
                 i = 0;
             }
