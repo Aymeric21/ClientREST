@@ -18,7 +18,7 @@ public class Main{
         String urliden = url+"identifiant";
 
         //////////////Pramétrage du client et des ressources serveur//////////////////////////////////////////////////////////
-        Integer interval = 100000;
+        Integer interval = 10000000;
         Client client = Client.create();
         client.setReadTimeout(interval);
         WebResource webResourceValeur = client.resource(urlValeur);
@@ -39,7 +39,7 @@ public class Main{
         Session session = new Session();
 
 
-        /////////////////récupération de l'id de notre client générer par le serveur//////////////////////////////////////////
+        /////////////////récupération de l'id de notre client généré par le serveur//////////////////////////////////////////
 
         responseIden = webResourceiden.accept("text/plain").get(ClientResponse.class);
         String id = responseIden.getEntity(String.class);
@@ -64,7 +64,7 @@ public class Main{
             responseType = webResourceType.accept("text/plain").put(ClientResponse.class,id);
             t = responseType.getEntity(String.class);
 
-            /////////test que la valeur de distance ou de temps est bien récupérer/////////////////////////////////////////////
+            /////////test que la valeur de distance ou de temps est bien récupérée/////////////////////////////////////////////
             if(!s.equals(""))
             {
                 i = Integer.parseInt(s);
@@ -73,7 +73,7 @@ public class Main{
                 }
                 i = 0;
             }
-
+            System.out.println("ici");
             /////////réinitialisation de l'état du client pour signifier au serveur que la session est fini///////////////////
             responseId = webResourceId.accept("text/plain").put(ClientResponse.class,id);
         }

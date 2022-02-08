@@ -1,6 +1,7 @@
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import javarow.*;
+import javarow.entity.Status;
 import javarow.entity.WorkoutState;
 
 import java.time.Duration;
@@ -56,11 +57,17 @@ public class Session {
         ClientResponse resp2;
         while(rower.getWorkout().getWorkoutState() != WorkoutState.WORKOUT_END)
         {
-            System.out.println(rower.getStatus().compareTo(FINISHED));
-            while(rower.getStroke().getCount() <= nb || rower.getStroke().getCount() == 0) {
-                if(rower.getWorkout().getWorkoutState() == WorkoutState.WORKOUT_END){
-                    break;
+            while(rower.getStroke().getCount() <= nb || rower.getStroke().getCount() == 0)
+            {
+                System.out.println("STATE : " + rower.getWorkout().getWorkoutState());
+                System.out.println("STATUS : " + rower.getStatus());
+
+                if(rower.getWorkout().getWorkoutState() == WorkoutState.WORKOUT_END ||rower.getStatus() == Status.READY){
+                    /*== WorkoutState.WORKOUT_REARM || rower.getWorkout().getWorkoutState() == WorkoutState.WORKOUT_TERMINATE){*/
+                    System.out.println("un truc");
+                    return;
                 }
+
             }
             power = rower.getMonitor().getPower();
             temps = rower.getMonitor().getTimeCentisecond();
