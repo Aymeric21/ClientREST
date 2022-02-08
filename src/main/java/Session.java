@@ -29,7 +29,7 @@ public class Session {
         rower.goToMenuScreen();
         rower.getMonitor();
         System.out.println("session lancé");
-        WebResource.Builder builder = wr.accept(MediaType.APPLICATION_JSON).header("content-type",MediaType.APPLICATION_JSON);
+        WebResource.Builder builder = wr.accept(MediaType.APPLICATION_JSON).header("content-type","application/json");
         if(type.equals("distance"))
         {
             int dist = Integer.parseInt(distancePar);
