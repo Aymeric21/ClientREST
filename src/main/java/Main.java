@@ -5,7 +5,7 @@ import com.sun.jersey.api.client.WebResource;
 import javarow.*;
 import javarow.entity.WorkoutState;
 
-public class Main {
+public class Main{
     public static void main(String[] args) {
 
         ///////////////URL de connexion au serveur/////////////////////////////////////////////////////////////////////////////
