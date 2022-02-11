@@ -29,7 +29,7 @@ public class Session {
         rower.goToMenuScreen();
         rower.getMonitor();
         System.out.println("session lancé");
-        WebResource.Builder builder = wr.accept(MediaType.APPLICATION_JSON).header("content-type","application/json");
+        WebResource.Builder builder = wr.accept("application/json").header("content-type","application/json");
         if(type.equals("distance"))
         {
             int dist = Integer.parseInt(distancePar);
@@ -58,7 +58,7 @@ public class Session {
         String spower;
         ClientResponse response;
         Donnees donnees;
-
+        DonneeJson dj = new DonneeJson();
         int nb = 0;
 
         ClientResponse resp2;
@@ -66,12 +66,12 @@ public class Session {
         {
             while(rower.getStroke().getCount() <= nb || rower.getStroke().getCount() == 0)
             {
-                System.out.println("STATE : " + rower.getWorkout().getWorkoutState());
-                System.out.println("STATUS : " + rower.getStatus());
+                //System.out.println("STATE : " + rower.getWorkout().getWorkoutState());
+                //System.out.println("STATUS : " + rower.getStatus());
 
                 if(rower.getWorkout().getWorkoutState() == WorkoutState.WORKOUT_END ||rower.getStatus() == Status.READY){
                     /*== WorkoutState.WORKOUT_REARM || rower.getWorkout().getWorkoutState() == WorkoutState.WORKOUT_TERMINATE){*/
-                    System.out.println("un truc");
+                    //System.out.println("un truc");
                     return;
                 }
 
@@ -88,7 +88,8 @@ public class Session {
             //response = builder.put(ClientResponse.class,donnees.envoie());
             JSONObject input = new JSONObject();
             input.put("puissance",power);
-            response = wr.accept(MediaType.APPLICATION_JSON).entity(input).put(ClientResponse.class,JSONObject.class);
+            org.json.simple.JSONObject jo = dj.addValeur(power);
+            response = wr.accept(MediaType.APPLICATION_JSON).entity(dj.addValeur(power)).put(ClientResponse.class,JSONObject.class);
             System.out.println(donnees.envoie());
             nb = rower.getStroke().getCount();
         }
