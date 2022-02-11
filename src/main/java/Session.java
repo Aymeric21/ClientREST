@@ -14,10 +14,12 @@ import static javarow.entity.Status.FINISHED;
 
 public class Session {
     private Rower rower;
+    private WebResource wr;
 
-    public Session()
+    public Session(WebResource wr)
     {
         this.rower = Rower.getInstance();
+        this.wr = wr;
     }
 
     public Rower getRower()
@@ -25,11 +27,9 @@ public class Session {
         return this.rower;
     }
 
-    public void lancerSession(WebResource wr,String distancePar,String type) throws JSONException {
-        rower.goToMenuScreen();
+    public void initSession(String type, String distancePar){
         rower.getMonitor();
-        System.out.println("session lancé");
-        WebResource.Builder builder = wr.accept("application/json").header("content-type","application/json");
+        rower.goToMenuScreen();
         if(type.equals("distance"))
         {
             int dist = Integer.parseInt(distancePar);
@@ -40,12 +40,13 @@ public class Session {
             Duration time = Duration.ofSeconds((long) t);
             rower.setWorkoutTime(time);
         }
+        System.out.println("Session initialisé");
+    }
 
-        Command command = new Command();
-        command.addCommand(ShortSpecificPMCommand.CSAFE_PM_GET_WORKOUTSTATE);
-        UsbResponse resp = rower.sendCommand(command);
-        Response.CSAFE_PM_GET_WORKOUTSTATE workoutState = (Response.CSAFE_PM_GET_WORKOUTSTATE) resp.specificPMResponses.get(Response.SPECIFIC_PM_CODE.CSAFE_PM_GET_WORKOUTSTATE);
-        System.out.println(command.getMessage());
+    public boolean lancerSession(String distancePar,String type, int idRameur) throws JSONException {
+        initSession(type,distancePar);
+
+        boolean b = false;
 
         int power;
         int temps;
@@ -55,24 +56,19 @@ public class Session {
         int calories_h;
         int calories;
         int frequence_bpm;
-        String spower;
+
         ClientResponse response;
-        Donnees donnees;
         DonneeJson dj = new DonneeJson();
         int nb = 0;
 
-        ClientResponse resp2;
         while(rower.getWorkout().getWorkoutState() != WorkoutState.WORKOUT_END)
         {
             while(rower.getStroke().getCount() <= nb || rower.getStroke().getCount() == 0)
             {
-                //System.out.println("STATE : " + rower.getWorkout().getWorkoutState());
-                //System.out.println("STATUS : " + rower.getStatus());
-
                 if(rower.getWorkout().getWorkoutState() == WorkoutState.WORKOUT_END ||rower.getStatus() == Status.READY){
-                    /*== WorkoutState.WORKOUT_REARM || rower.getWorkout().getWorkoutState() == WorkoutState.WORKOUT_TERMINATE){*/
-                    //System.out.println("un truc");
-                    return;
+                    System.out.println("fini break");
+                    b = true;
+                    return b;
                 }
 
             }
@@ -84,20 +80,15 @@ public class Session {
             calories_h = rower.getMonitor().getCaloriesPerHour();
             calories = rower.getMonitor().getCalories();
             frequence_bpm = rower.getMonitor().getHeartrateBpm();
-            donnees = new Donnees(power,temps,distance,coups_pm,rythme,calories_h,calories,frequence_bpm);
-            //response = builder.put(ClientResponse.class,donnees.envoie());
-            JSONObject input = new JSONObject();
-            input.put("puissance",power);
-            org.json.simple.JSONObject jo = dj.addValeur(power);
-            response = wr.accept(MediaType.APPLICATION_JSON).entity(dj.addValeur(power)).put(ClientResponse.class,JSONObject.class);
-            System.out.println(donnees.envoie());
+
+            String s = dj.addValeur(power,temps,distance,coups_pm,rythme,calories_h,calories,frequence_bpm,idRameur).toJSONString();
+            System.out.println(s);
+            response = wr.accept("text/plain").put(ClientResponse.class,s);
             nb = rower.getStroke().getCount();
         }
 
-        Command c = new Command();
-        c.addCommand(ShortCommand.CSAFE_RESET_CMD);
-        rower.sendCommand(command);
-
+        b = true;
         System.out.println("fini !");
+        return b;
     }
 }
