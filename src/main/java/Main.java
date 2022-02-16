@@ -6,12 +6,16 @@ import javarow.*;
 import javarow.entity.WorkoutState;
 import org.codehaus.jettison.json.JSONException;
 
+import java.time.Duration;
+
 public class Main{
 
     private final static String url = "http://10.169.195.150:8080/ServeurEJBRameurTutore-1.0-SNAPSHOT/rest/ressource/";
     private final static String urlPerformance = "http://10.169.195.150:8080/ServeurEJBRameurTutore-1.0-SNAPSHOT/rest/donneeJson/puissance";
     private final static String urlValeur = url+"valeur";
     private final static String urlType = url+"type";
+    private final static String urlRepos = url+"repos";
+    private final static String urlRepetition = url+"repetition";
     private final static String urlid = url+"ajoutRameur";
     private final static String urliden = url+"identifiant";
 
@@ -25,6 +29,8 @@ public class Main{
         WebResource webResourceDelete = client.resource(url);
         WebResource webResourceValeur = client.resource(urlValeur);
         WebResource webResourceType = client.resource(urlType);
+        WebResource webResourceRepos = client.resource(urlRepos);
+        WebResource webResourceRepetition = client.resource(urlRepetition);
         WebResource webResourcePerf = client.resource(urlPerformance);
         WebResource webResourceId = client.resource(urlid);
         WebResource webResourceiden = client.resource(urliden);
@@ -41,6 +47,8 @@ public class Main{
 
         String s;
         String t;
+        String rps;
+        String rptt;
         int i;
         Session session = new Session(webResourcePerf);
         boolean b = false;
@@ -53,8 +61,16 @@ public class Main{
             do{
                 response = webResourceValeur.accept("text/plain").put(ClientResponse.class,id);
                 s = response.getEntity(String.class);
+                //System.out.println(s);
                 response = webResourceType.accept("text/plain").put(ClientResponse.class,id);
                 t = response.getEntity(String.class);
+                //System.out.println(t);
+                response = webResourceRepos.accept("text/plain").put(ClientResponse.class,id);
+                rps = response.getEntity(String.class);
+                //System.out.println(rps);
+                response = webResourceRepetition.accept("text/plain").put(ClientResponse.class,id);
+                rptt = response.getEntity(String.class);
+                //System.out.println(rptt);
             }while(response.getStatus() != 200);
 
             /////////test que la valeur de distance ou de temps est bien récupérée/////////////////////////////////////////////
@@ -69,8 +85,28 @@ public class Main{
                 }
             }
 
-            if(i > 0 && (t.equals("distance") || t.equals("temps"))){
-                b=session.lancerSession(s,t,iid);
+            int repetition = Integer.parseInt(rptt);
+            int repos = Integer.parseInt(rps);
+
+            if(i > 0 && (t.equals("distance") || t.equals("temps") || t.equals("entrainement"))){
+                //System.out.println("J'entre dans la boucle if");
+                if(t.equals("entrainement"))
+                {
+                    /*
+                    System.out.println("Temps de repos : "+rps);
+                    System.out.println("Nb répétition : "+rptt);
+                    System.out.println("Distance : "+s);*/
+                    for (int j = 0; j < repetition; j++) {
+                        session.getRower().goToMenuScreen();
+                        b = session.lancerSession(s,t,iid,repos,repetition);
+                        //Thread.sleep(5000);
+                        //session.getRower().goToMenuScreen();
+                        System.out.println("Pause de "+repos+" secondes");
+                        //session.getRower().setWorkoutTime(Duration.ofSeconds(Long.parseLong(rps)));
+                        Thread.sleep(repos*1000);
+                    }
+                }else if(t.equals("distance") || t.equals("temps"))
+                    b=session.lancerSession(s,t,iid, repos, repetition);
             }
 
             Thread.sleep(5000);

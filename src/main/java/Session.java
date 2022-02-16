@@ -27,7 +27,7 @@ public class Session {
         return this.rower;
     }
 
-    public void initSession(String type, String distancePar){
+    public void initSession(String type, String distancePar, int repos, int repetition){
         rower.getMonitor();
         rower.goToMenuScreen();
         if(type.equals("distance"))
@@ -39,12 +39,15 @@ public class Session {
             double t = Double.parseDouble(distancePar);
             Duration time = Duration.ofSeconds((long) t);
             rower.setWorkoutTime(time);
+        }else if(type.equals("entrainement")){
+            int dist = Integer.parseInt(distancePar);
+            rower.setWorkoutDistance(dist);
         }
         System.out.println("Session initialisé");
     }
 
-    public boolean lancerSession(String distancePar,String type, int idRameur) throws JSONException {
-        initSession(type,distancePar);
+    public boolean lancerSession(String distancePar,String type, int idRameur,int repos, int repetition) throws JSONException {
+        initSession(type,distancePar,repos,repetition);
 
         boolean b = false;
 
