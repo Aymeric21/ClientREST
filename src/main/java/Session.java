@@ -64,6 +64,11 @@ public class Session {
         DonneeJson dj = new DonneeJson();
         int nb = 0;
 
+        int dist = 0;
+        if(type.equals("distance")) {
+            dist = Integer.parseInt(distancePar)*10;
+        }
+
         while(rower.getWorkout().getWorkoutState() != WorkoutState.WORKOUT_END)
         {
             while(rower.getStroke().getCount() <= nb || rower.getStroke().getCount() == 0)
@@ -78,6 +83,13 @@ public class Session {
             power = rower.getMonitor().getPower();
             temps = rower.getMonitor().getTimeCentisecond();
             distance = rower.getMonitor().getDistanceDecimeter();
+
+            if(type.equals("distance")) {
+                System.out.println("distance programmée : "+dist);
+                System.out.println("distance parcourue : "+distance);
+                distance = dist - distance;
+            }
+
             coups_pm = rower.getMonitor().getSpm();
             rythme = rower.getMonitor().getPaceSecondPerKilometer();
             calories_h = rower.getMonitor().getCaloriesPerHour();

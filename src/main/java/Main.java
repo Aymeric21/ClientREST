@@ -40,7 +40,8 @@ public class Main{
         /////////////////récupération de l'id de notre client généré par le serveur//////////////////////////////////////////
         response = webResourceiden.accept("text/plain").get(ClientResponse.class);
         String id = response.getEntity(String.class);
-        int iid = Integer.parseInt(id);
+        int iid = Integer.
+                parseInt(id);
 
         ///////////////initialisation des paramètre du rameur//////////////////////////////////////////////////////////////////
         response = webResourceId.accept("text/plain").put(ClientResponse.class,id);
