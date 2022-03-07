@@ -106,8 +106,9 @@ public class Main{
                         //session.getRower().setWorkoutTime(Duration.ofSeconds(Long.parseLong(rps)));
                         Thread.sleep(repos*1000);
                     }
-                }else if(t.equals("distance") || t.equals("temps"))
-                    b=session.lancerSession(s,t,iid, repos, repetition);
+                }else if(t.equals("distance") || t.equals("temps")) {
+                    b = session.lancerSession(s, t, iid, repos, repetition);
+                }
             }
 
             Thread.sleep(5000);

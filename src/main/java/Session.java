@@ -51,20 +51,21 @@ public class Session {
 
         boolean b = false;
 
-        int power;
-        int temps;
-        int distance;
-        int coups_pm;
-        int rythme;
-        int calories_h;
-        int calories;
-        int frequence_bpm;
+        int power = 0;
+        int temps = 0;
+        int distance = 0;
+        int coups_pm = 0;
+        int rythme = 0;
+        int calories_h = 0;
+        int calories = 0;
+        int frequence_bpm = 0;
 
         ClientResponse response;
         DonneeJson dj = new DonneeJson();
         int nb = 0;
 
         int dist = 0;
+        int temp = 0;
         if(type.equals("distance")) {
             dist = Integer.parseInt(distancePar)*10;
         }
@@ -83,25 +84,45 @@ public class Session {
             power = rower.getMonitor().getPower();
             temps = rower.getMonitor().getTimeCentisecond();
             distance = rower.getMonitor().getDistanceDecimeter();
-
-            if(type.equals("distance")) {
-                System.out.println("distance programmée : "+dist);
-                System.out.println("distance parcourue : "+distance);
-                distance = dist - distance;
-            }
-
             coups_pm = rower.getMonitor().getSpm();
             rythme = rower.getMonitor().getPaceSecondPerKilometer();
             calories_h = rower.getMonitor().getCaloriesPerHour();
             calories = rower.getMonitor().getCalories();
             frequence_bpm = rower.getMonitor().getHeartrateBpm();
+            int temp2=0;
+            if(type.equals("distance")) {
+                if(dist == distance){
+                    power = 0;
+                    temps = 0;
+                    distance = 0;
+                    coups_pm = 0;
+                    rythme = 0;
+                    calories_h = 0;
+                    calories = 0;
+                    frequence_bpm = 0;
+                }else {
+                    System.out.println("distance programmée : " + dist);
+                    System.out.println("distance restante : " + distance);
 
-            String s = dj.addValeur(power,temps,distance,coups_pm,rythme,calories_h,calories,frequence_bpm,idRameur).toJSONString();
+                    if(temp != 0)
+                        temp2 = temp - distance;
+                    else
+                        temp2 = dist - distance;
+                    temp = distance;
+
+                    System.out.println("distance parcourue : " + temp2);
+                }
+            }
+
+            String s = dj.addValeur(power,temps,temp2,coups_pm,rythme,calories_h,calories,frequence_bpm,idRameur).toJSONString();
             System.out.println(s);
             response = wr.accept("text/plain").put(ClientResponse.class,s);
             nb = rower.getStroke().getCount();
         }
 
+        String s = dj.addValeur(power,temps,dist,coups_pm,rythme,calories_h,calories,frequence_bpm,idRameur).toJSONString();
+        System.out.println(s);
+        response = wr.accept("text/plain").put(ClientResponse.class,s);
         b = true;
         System.out.println("fini !");
         return b;
