@@ -120,9 +120,6 @@ public class Session {
             nb = rower.getStroke().getCount();
         }
 
-        String s = dj.addValeur(power,temps,dist,coups_pm,rythme,calories_h,calories,frequence_bpm,idRameur).toJSONString();
-        System.out.println(s);
-        response = wr.accept("text/plain").put(ClientResponse.class,s);
         b = true;
         System.out.println("fini !");
         return b;
