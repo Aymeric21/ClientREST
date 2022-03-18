@@ -90,6 +90,7 @@ public class Session {
             calories = rower.getMonitor().getCalories();
             frequence_bpm = rower.getMonitor().getHeartrateBpm();
             int temp2=0;
+
             if(type.equals("distance")) {
                 if(dist == distance){
                     power = 0;
